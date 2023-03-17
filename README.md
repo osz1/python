@@ -1,4 +1,4 @@
-# Java
+# Python
 
 ## Fibonacci number
 Check the given number is Fibonacci number.
