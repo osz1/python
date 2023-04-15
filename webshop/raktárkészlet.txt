@@ -1,0 +1,8 @@
+# TERMÉK_NEVE|TERMÉK_ÁRA|RENDELKEZÉSRE_ÁLLÓ_MENNYISÉG
+laptop;3000;356
+sütő;1000;21
+vízforraló;500;76
+kenyérsütő;1500;0
+telefon;850;2
+radiátor;550;4
+kávéfőző;600;2

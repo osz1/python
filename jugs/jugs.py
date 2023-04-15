@@ -1,25 +1,31 @@
 # k < m, k < n
-
-def amigtele(m, n, k):
+def jugs1(m, n, k):
     if (k < m) and (k < n):
         mM = m
         nN = 0
         print(mM, nN)
+
         mM = m - n
         nN = n
         print(mM, nN)
+
         if k in (mM, nN):
             return mM, nN
         else:
-            amigtele(mM, nN, k)
-        return mM, nN
-print(amigtele(5, 3, 2))
+            jugs1(mM, nN, k)
 
-def amigures(m, n, k, mm=0):
+        return mM, nN
+
+
+print(jugs1(5, 3, 2))
+
+
+def jugs2(m, n, k, mm=0):
     if (k < m) and (k < n) and (mm < m):
         mM = mm
         nN = n
         print(mM, nN)
+
         if (m - mM) >= n:
             mM += n
             nN = 0
@@ -27,9 +33,13 @@ def amigures(m, n, k, mm=0):
             nN = n - (m - mM)
             mM = m
         print(mM, nN)
+
         if k in (mM, nN):
             return mM, nN
         else:
-            amigures(m, n, k, mM)
+            jugs2(m, n, k, mM)
+
         return mM, nN
-print(amigures(5, 3, 1))
+
+
+print(jugs2(5, 3, 1))

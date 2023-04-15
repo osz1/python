@@ -7,9 +7,9 @@
 #     7   8
 
 # class newNode:
-    # def __init__(self, data):
-        # self.data = data
-        # self.left = self.middle = self.right = None
+# def __init__(self, data):
+# self.data = data
+# self.left = self.middle = self.right = None
 # root1 = newNode(1)
 # root1.left = newNode(2)
 # root1.right = newNode(3)
@@ -19,7 +19,7 @@
 # root1.left.left.right = root1.left.middle = root1.left.right.left = root1.middle.left = root1.right.left.left = newNode(7)
 # root1.left.right.right = root1.middle.right = root1.right.left.right = root1.right.right.left = newNode(8)
 
-graf1 = {
+graph1 = {
     1: [2, 3, 5],
     2: [4, 5, 7],
     3: [5, 6],
@@ -27,25 +27,35 @@ graf1 = {
     5: [7, 8],
     6: [8],
     7: [],
-    8: []
+    8: [],
 }
+
 s = []
-def utvonalak(graf, kezdo, veg, ut=[]):
-    s.append(kezdo)
-    ut = ut + [kezdo]
-    if kezdo == veg:
-        return [ut]
-    if kezdo not in graf:
+
+
+def paths_in_graph(graph, start, end, path=[]):
+    s.append(start)
+    path = path + [start]
+
+    if start == end:
+        return [path]
+
+    if start not in graph:
         return []
-    utak = []
-    for csucs in graf[kezdo]:
-        if csucs == s[0]:
-            utak.append([False])
-            print('Kör!')
+
+    paths = []
+    for edge in graph[start]:
+        if edge == s[0]:
+            paths.append([False])
+            print("Kör!")
             break
-        if csucs not in ut:
-            ujutak = utvonalak(graf, csucs, veg, ut)
-            for ujut in ujutak:
-                utak.append(ujut)
-    return utak
-print(sorted(utvonalak(graf1, 1, 7), key=len))
+
+        if edge not in path:
+            new_paths = paths_in_graph(graph, edge, end, path)
+            for new_path in new_paths:
+                paths.append(new_path)
+
+    return paths
+
+
+print(sorted(paths_in_graph(graph1, 1, 7), key=len))
