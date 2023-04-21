@@ -1,11 +1,3 @@
-#       1
-#      /|\
-#     2 | 3
-#    /|\|/ \
-#   4 | 5   6
-#    \|/ \ /
-#     7   8
-
 # class newNode:
 # def __init__(self, data):
 # self.data = data
@@ -19,6 +11,14 @@
 # root1.left.left.right = root1.left.middle = root1.left.right.left = root1.middle.left = root1.right.left.left = newNode(7)
 # root1.left.right.right = root1.middle.right = root1.right.left.right = root1.right.right.left = newNode(8)
 
+#       1
+#      /|\
+#     2 | 3
+#    /|\|/ \
+#   4 | 5   6
+#    \|/ \ /
+#     7   8
+
 graph1 = {
     1: [2, 3, 5],
     2: [4, 5, 7],
@@ -30,11 +30,13 @@ graph1 = {
     8: [],
 }
 
+# kör ellenőrzés
 s = []
 
 
 def paths_in_graph(graph, start, end, path=[]):
-    s.append(start)
+    s.append(start)  # kör ellenőrzés
+
     path = path + [start]
 
     if start == end:
@@ -45,6 +47,7 @@ def paths_in_graph(graph, start, end, path=[]):
 
     paths = []
     for edge in graph[start]:
+        # kör ellenőrzés
         if edge == s[0]:
             paths.append([False])
             print("Kör!")

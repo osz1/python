@@ -14,116 +14,69 @@ left_up_x = 0  # bal felső sarok x
 left_up_y = 0  # bal felső sarok y
 
 # alakzatok
-s = [['.....',
-      '.....',
-      '..00.',
-      '.00..',
-      '.....'],
-     ['.....',
-      '..0..',
-      '..00.',
-      '...0.',
-      '.....']]
-z = [['.....',
-      '.....',
-      '.00..',
-      '..00.',
-      '.....'],
-     ['.....',
-      '..0..',
-      '.00..',
-      '.0...',
-      '.....']]
-i = [['..0..',
-      '..0..',
-      '..0..',
-      '..0..',
-      '.....'],
-     ['.....',
-      '0000.',
-      '.....',
-      '.....',
-      '.....']]
-o = [['.....',
-      '.....',
-      '.00..',
-      '.00..',
-      '.....']]
-j = [['.....',
-      '.0...',
-      '.000.',
-      '.....',
-      '.....'],
-     ['.....',
-      '..00.',
-      '..0..',
-      '..0..',
-      '.....'],
-     ['.....',
-      '.....',
-      '.000.',
-      '...0.',
-      '.....'],
-     ['.....',
-      '..0..',
-      '..0..',
-      '.00..',
-      '.....']]
-l = [['.....',
-      '...0.',
-      '.000.',
-      '.....',
-      '.....'],
-     ['.....',
-      '..0..',
-      '..0..',
-      '..00.',
-      '.....'],
-     ['.....',
-      '.....',
-      '.000.',
-      '.0...',
-      '.....'],
-     ['.....',
-      '.00..',
-      '..0..',
-      '..0..',
-      '.....']]
-t = [['.....',
-      '..0..',
-      '.000.',
-      '.....',
-      '.....'],
-     ['.....',
-      '..0..',
-      '..00.',
-      '..0..',
-      '.....'],
-     ['.....',
-      '.....',
-      '.000.',
-      '..0..',
-      '.....'],
-     ['.....',
-      '..0..',
-      '.00..',
-      '..0..',
-      '.....']]
+s = [
+    [".....", ".....", "..00.", ".00..", "....."],
+    [".....", "..0..", "..00.", "...0.", "....."],
+]
+
+z = [
+    [".....", ".....", ".00..", "..00.", "....."],
+    [".....", "..0..", ".00..", ".0...", "....."],
+]
+
+i = [
+    ["..0..", "..0..", "..0..", "..0..", "....."],
+    [".....", "0000.", ".....", ".....", "....."],
+]
+
+o = [[".....", ".....", ".00..", ".00..", "....."]]
+
+j = [
+    [".....", ".0...", ".000.", ".....", "....."],
+    [".....", "..00.", "..0..", "..0..", "....."],
+    [".....", ".....", ".000.", "...0.", "....."],
+    [".....", "..0..", "..0..", ".00..", "....."],
+]
+
+l = [
+    [".....", "...0.", ".000.", ".....", "....."],
+    [".....", "..0..", "..0..", "..00.", "....."],
+    [".....", ".....", ".000.", ".0...", "....."],
+    [".....", ".00..", "..0..", "..0..", "....."],
+]
+
+t = [
+    [".....", "..0..", ".000.", ".....", "....."],
+    [".....", "..0..", "..00.", "..0..", "....."],
+    [".....", ".....", ".000.", "..0..", "....."],
+    [".....", "..0..", ".00..", "..0..", "....."],
+]
 
 shapes = [s, z, i, o, j, l, t]
-colors = [(0, 255, 0), (255, 0, 0), (0, 255, 255), (255, 255, 0), (255, 255, 255), (0, 0, 255), (255, 0, 255)]
+colors = [
+    (0, 255, 0),
+    (255, 0, 0),
+    (0, 255, 255),
+    (255, 255, 0),
+    (255, 255, 255),
+    (0, 0, 255),
+    (255, 0, 255),
+]
+
 
 class Piece(object):
-    rows = unit_height # y
-    columns = unit_width # x
+    rows = unit_height  # y
+    columns = unit_width  # x
 
     def __init__(self, column, row, shape):
         self.x = column
         self.y = row
         self.shape = shape
         self.color = colors[shapes.index(shape)]
-        self.rotation = 0 # 0-3
+        self.rotation = 0  # 0-3
 
+
+# rács létrehozása
 def create_grid(reserved_positions={}):
     grid = [[(0, 0, 0) for x in range(unit_width)] for x in range(unit_height)]
     for i in range(len(grid)):
@@ -133,12 +86,14 @@ def create_grid(reserved_positions={}):
 
     return grid
 
+
+# alakzat koordinátái
 def transform_shape(shape):
     positions = []
     final_shape = shape.shape[shape.rotation % len(shape.shape)]
     for i, line in enumerate(final_shape):
-        for j, column in enumerate(list(line)): # row
-            if column == '0':
+        for j, column in enumerate(list(line)):  # row
+            if column == "0":
                 positions.append((shape.x + j, shape.y + i))
 
     for i, pos in enumerate(positions):
@@ -146,8 +101,13 @@ def transform_shape(shape):
 
     return positions
 
+
+# szabad hely
 def free_place(shape, grid):
-    free_positions = [[(j, i) for j in range(unit_width) if grid[i][j] == (0, 0, 0)] for i in range(unit_height)]
+    free_positions = [
+        [(j, i) for j in range(unit_width) if grid[i][j] == (0, 0, 0)]
+        for i in range(unit_height)
+    ]
     free_positions = [j for al in free_positions for j in al]
 
     transformed_position = transform_shape(shape)
@@ -158,6 +118,8 @@ def free_place(shape, grid):
 
     return True
 
+
+# vereség ellenőrzése
 def check_defeat(positions):
     for pos in positions:
         x, y = pos
@@ -166,21 +128,42 @@ def check_defeat(positions):
 
     return False
 
+
+# alakzat létrehozása
 def create_shape():
     global shapes, colors
     return Piece(5, 0, random.choice(shapes))
 
-def display_text_in_middle(text, size, color, surface):
-    font_type = pygame.font.SysFont('bahnschrift', size, bold=True)
-    label = font_type.render(text, 1, color)
-    surface.blit(label, (left_up_x + 10, left_up_y + play_height / 2 - label.get_height() / 2))
 
+# szöveg megjelenítése az ablak közepen
+def display_text_in_middle(text, size, color, surface):
+    font_type = pygame.font.SysFont("bahnschrift", size, bold=True)
+    label = font_type.render(text, 1, color)
+
+    surface.blit(
+        label, (left_up_x + 10, left_up_y + play_height / 2 - label.get_height() / 2)
+    )
+
+
+# rács megjelenítése
 def display_grid(surface, row, column):
     for i in range(row):
-        pygame.draw.line(surface, (128, 128, 128), (left_up_x, left_up_y + i * block), (left_up_x + play_width, left_up_y + i * block))  # horizontális lineak
+        pygame.draw.line(
+            surface,
+            (128, 128, 128),
+            (left_up_x, left_up_y + i * block),
+            (left_up_x + play_width, left_up_y + i * block),
+        )  # horizontális lineak
         for j in range(column):
-            pygame.draw.line(surface, (128, 128, 128), (left_up_x + j * block, left_up_y), (left_up_x + j * block, left_up_y + play_height))  # vertikális lineak
+            pygame.draw.line(
+                surface,
+                (128, 128, 128),
+                (left_up_x + j * block, left_up_y),
+                (left_up_x + j * block, left_up_y + play_height),
+            )  # vertikális lineak
 
+
+# (kitöltött) sorok törlése
 def delete_rows(grid, reserved):
     fullfilled_rows = 0
     for i in range(len(grid) - 1, -1, -1):
@@ -201,38 +184,63 @@ def delete_rows(grid, reserved):
                 new_key = (x, y + fullfilled_rows)
                 reserved[new_key] = reserved.pop(key)
 
-    return fullfilled_rows # pontozás
+    return fullfilled_rows  # pontozás
 
+
+# következő alakzat megjelenítése
 def display_next_shape(shape, surface):
-    font_type = pygame.font.SysFont('bahnschrift', 25)
-    label = font_type.render('Következő alakzat', 1, (255, 255, 255))
+    font_type = pygame.font.SysFont("bahnschrift", 25)
+    label = font_type.render("Következő alakzat", 1, (255, 255, 255))
     sx = left_up_x + play_width + 10
     sy = left_up_y + play_height - 400
+
     final_shape = shape.shape[shape.rotation % len(shape.shape)]
     for i, line in enumerate(final_shape):
-        for j, column in enumerate(list(line)): # row
-            if column == '0':
-                pygame.draw.rect(surface, shape.color, (sx + j * block, sy + i * block, block, block), 0)
+        for j, column in enumerate(list(line)):  # sor
+            if column == "0":
+                pygame.draw.rect(
+                    surface,
+                    shape.color,
+                    (sx + j * block, sy + i * block, block, block),
+                    0,
+                )
+
     surface.blit(label, (sx + 10, sy - 30))
 
+
+# ablak megjelenítése
 def display_window(surface, grid, score=0):
     surface.fill((0, 0, 0))
-    font_type = pygame.font.SysFont('bahnschrift', 50)
-    label = font_type.render('TETRIS', 1, (255, 255, 255))
+
+    font_type = pygame.font.SysFont("bahnschrift", 50)
+    label = font_type.render("TETRIS", 1, (255, 255, 255))
+
     surface.blit(label, (left_up_x + play_width + 10, left_up_y))
-    font_type = pygame.font.SysFont('bahnschrift', 25)
-    label = font_type.render('score: ' + str(score), 1, (255, 255, 255))
+
+    font_type = pygame.font.SysFont("bahnschrift", 25)
+    label = font_type.render("score: " + str(score), 1, (255, 255, 255))
+
     surface.blit(label, (left_up_x + play_width + 10, left_up_y + play_height - 50))
+
     for i in range(len(grid)):
         for j in range(len(grid[i])):
-            pygame.draw.rect(surface, grid[i][j], (left_up_x + j * block, left_up_y + i * block, block, block), 0)
+            pygame.draw.rect(
+                surface,
+                grid[i][j],
+                (left_up_x + j * block, left_up_y + i * block, block, block),
+                0,
+            )
+
     # rács és szegély megjelenítése
     display_grid(surface, unit_height, unit_width)
-    pygame.draw.rect(surface, (0, 128, 128), (left_up_x, left_up_y, play_width, play_height), 5)
+    pygame.draw.rect(
+        surface, (0, 128, 128), (left_up_x, left_up_y, play_width, play_height), 5
+    )
+
 
 def base():
     global grid
-    reserved_positions = {} # (x, y): (255, 0, 0)
+    reserved_positions = {}  # (x, y): (255, 0, 0)
     grid = create_grid(reserved_positions)
 
     change_piece = False
@@ -277,9 +285,13 @@ def base():
                         current_piece.x -= 1
                 elif event.key == pygame.K_UP:
                     # alakzat forgatása
-                    current_piece.rotation = current_piece.rotation + 1 % len(current_piece.shape)
+                    current_piece.rotation = current_piece.rotation + 1 % len(
+                        current_piece.shape
+                    )
                     if not free_place(current_piece, grid):
-                        current_piece.rotation = current_piece.rotation - 1 % len(current_piece.shape)
+                        current_piece.rotation = current_piece.rotation - 1 % len(
+                            current_piece.shape
+                        )
 
                 if event.key == pygame.K_DOWN:
                     # alakzat (lefelé) mozgásának gyorsítása
@@ -318,11 +330,15 @@ def base():
     pygame.display.update()
     pygame.time.delay(2000)
 
+
+# főmenü
 def main_menu():
     run = True
     while run:
         window.fill((0, 0, 0))
-        display_text_in_middle('Nyomja meg valamelyik gombot.', 30, (255, 255, 255), window)
+        display_text_in_middle(
+            "Nyomja meg valamelyik gombot.", 30, (255, 255, 255), window
+        )
         pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -332,7 +348,8 @@ def main_menu():
                 base()
     pygame.quit()
 
+
 window = pygame.display.set_mode((window_width, window_height))
-pygame.display.set_caption('Tetris')
+pygame.display.set_caption("Tetris")
 
 main_menu()  # játék kezdése

@@ -18,6 +18,7 @@
 # print(checkFibonacci(144))
 
 
+# a szám tagja-e a Fibonacci sorozatnak
 def checkNumberIsFibonacci(n):
     s1 = 0
     s2 = 1

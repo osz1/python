@@ -2,6 +2,7 @@ import numpy
 import collections
 import json
 
+# vizsgálandó fájl beolvasása
 print('\nValdi szavakat listázó "programja".\n')
 input_file = input("Vizgálandó TXT fájl neve:\n")
 if not input_file.endswith(".txt"):
@@ -41,13 +42,20 @@ for i, word in numpy.ndenumerate(words):
                     s = str(word)
                     string[s] = int(num[i])
 
+# szövegek
 str_sort = collections.OrderedDict(reversed(sorted(string.items(), key=lambda t: t[1])))
+
+# egész számok
 int_sort = collections.OrderedDict(
     reversed(sorted(integer.items(), key=lambda t: t[1]))
 )
+
+# tört számok
 float_sort = collections.OrderedDict(
     reversed(sorted(float_num.items(), key=lambda t: t[1]))
 )
+
+# dátumok
 date_sort = collections.OrderedDict(reversed(sorted(date.items(), key=lambda t: t[1])))
 
 print("\nElemek és gyakorisságuk listája")

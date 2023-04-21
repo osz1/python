@@ -1,3 +1,5 @@
+# m, n: kancsók mérete
+# k: kimérendő víz mennyisége
 # k < m, k < n
 def jugs1(m, n, k):
     if (k < m) and (k < n):

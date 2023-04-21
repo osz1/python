@@ -46,7 +46,7 @@ class Cube:
 
         return end_position
 
-    # tekerés
+    # tekerések
     def _rot_x1(self, cw):  # óramutató járásával egyezik-e
         cc = [list(row) for row in self.position]
         f1, f2, f3 = cc[0][3], cc[1][3], cc[2][3]
@@ -209,6 +209,7 @@ class Cube:
 
         return cc
 
+    # lehetséges további tekerések az adott pozícióból
     def get_moves(self):
         moves = []
         moves.append(Cube(self._rot_x1(True)))
@@ -255,8 +256,8 @@ class CubeSolver:
         self.start = initial_cube
 
     def do_algorithm(self):
-        queue = [[self.start]]
-        expanded = []
+        queue = [[self.start]]  # tekerési útvonalak
+        expanded = []  # megvizsgált pozíciók
         num_expanded_nodes = 0
         path = None
 
@@ -317,27 +318,36 @@ import random
 pygame.font.init()
 
 block = 40
-unit_w = 12
-unit_h = 9
-gw = block * unit_w  # rács szélesség
-gh = block * unit_h  # rács magasság
-win_w = gw  # ablak szélesség
-win_h = gh  # ablak magasság
-tlx = 0  # bal felső sarok x
-tly = 0  # bal felső sarok y
+unit_width = 12
+unit_height = 9
+grid_width = block * unit_width  # rács szélesség
+grid_height = block * unit_height  # rács magasság
+window_width = grid_width  # ablak szélesség
+win_height = gh  # ablak magasság
+top_left_x = 0  # bal felső sarok x
+top_left_y = 0  # bal felső sarok y
 
 
 def grid_draw(surface, row, column):
     for i in range(row):
+        # horizontális vonalak
         pygame.draw.line(
-            surface, (0, 0, 0), (tlx, tly + i * block), (tlx + gw, tly + i * block)
-        )  # horizontális vonalak
+            surface,
+            (0, 0, 0),
+            (top_left_x, top_left_y + i * block),
+            (top_left_x + grid_width, top_left_y + i * block),
+        )
         for j in range(column):
+            # vertikális vonalak
             pygame.draw.line(
-                surface, (0, 0, 0), (tlx + j * block, tly), (tlx + j * block, tly + gh)
-            )  # vertikális vonalak
+                surface,
+                (0, 0, 0),
+                (top_left_x + j * block, top_left_y),
+                (top_left_x + j * block, top_left_y + grid_height),
+            )
 
 
+# ablak megjelenítése
 def window_draw(surface, grid):
     colors = {
         " ": (0, 0, 0),
@@ -354,16 +364,18 @@ def window_draw(surface, grid):
             pygame.draw.rect(
                 surface,
                 colors[grid[i][j]],
-                (tlx + j * block, tly + i * block, block, block),
+                (top_left_x + j * block, top_left_y + i * block, block, block),
                 0,
             )
 
     # rács és szegély megjelenítése
-    grid_draw(surface, unit_h, unit_w)
-    pygame.draw.rect(surface, (0, 0, 0), (tlx, tly, gw, gh), 5)
+    grid_draw(surface, unit_height, unit_width)
+    pygame.draw.rect(
+        surface, (0, 0, 0), (top_left_x, top_left_y, grid_width, grid_height), 5
+    )
 
 
-window = pygame.display.set_mode((win_w, win_h))
+window = pygame.display.set_mode((window_width, win_height))
 pygame.display.set_caption("Rubik kocka megoldása")
 
 global grid

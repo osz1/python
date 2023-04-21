@@ -48,11 +48,12 @@ city = cities[0]
 path = None
 shortest_length = None
 
-travels = itertools.permutations(cities[1:], len(cities[1:]))
+travels = itertools.permutations(cities[1:], len(cities[1:]))  # útvonalak
 for travel in travels:
     length = 0
     for i in range(len(travel[:-1])):
         length += distances[travel[i]][travel[i + 1]]
+
     length += distances[travel[-1]][city]
     length += distances[city][travel[0]]
 

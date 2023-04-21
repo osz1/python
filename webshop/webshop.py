@@ -1,38 +1,46 @@
 import numpy
 
+# termékek
+items = numpy.genfromtxt(
+    "raktárkészlet.txt",
+    dtype=str,
+    delimiter=";",
+    skip_header=1,
+    usecols=0,
+    encoding="utf-8",
+)
+
+# árak
+prices = numpy.genfromtxt(
+    "raktárkészlet.txt",
+    dtype=int,
+    delimiter=";",
+    skip_header=1,
+    usecols=1,
+    encoding="utf-8",
+)
+
+# mennyiségek
+quantities = numpy.genfromtxt(
+    "raktárkészlet.txt",
+    dtype=int,
+    delimiter=";",
+    skip_header=1,
+    usecols=2,
+    encoding="utf-8",
+)
+
+# rendelés modellezés
 month = numpy.arange("2021-11", "2021-12", dtype="datetime64[D]")
 for day in month:
-    items = numpy.genfromtxt(
-        "raktárkészlet.txt",
-        dtype=str,
-        delimiter=";",
-        skip_header=1,
-        usecols=0,
-        encoding="utf-8",
-    )
-    prices = numpy.genfromtxt(
-        "raktárkészlet.txt",
-        dtype=int,
-        delimiter=";",
-        skip_header=1,
-        usecols=1,
-        encoding="utf-8",
-    )
-    quantities = numpy.genfromtxt(
-        "raktárkészlet.txt",
-        dtype=int,
-        delimiter=";",
-        skip_header=1,
-        usecols=2,
-        encoding="utf-8",
-    )
-
     date = str(day).replace("-", ".")
     random_item = numpy.random.choice(items)
     random_quantity = numpy.random.randint(1, 15)
 
     idx = numpy.where(items == random_item)
+
     random_pay = random_quantity * prices[idx][0]
+
     line = (
         "\n"
         + random_item
@@ -43,10 +51,13 @@ for day in month:
         + ";"
         + date
     )
+
     if random_quantity <= quantities[idx]:
         with open("rendelések.txt", "a", encoding="utf-8") as file:
             file.write(line + ";igen")
+
         quantities[idx] -= random_quantity
+
         numpy.savetxt(
             "raktárkészlet.txt",
             numpy.stack((items, prices, quantities), axis=-1),
@@ -104,6 +115,7 @@ order_successfulness = numpy.genfromtxt(
 order_item_uniq = numpy.unique(order_item)
 success_order_quantity = numpy.zeros(len(order_item_uniq))
 success_order_pay = numpy.zeros(len(order_item_uniq))
+
 success = 0
 unsuccess = 0
 for idx, x in numpy.ndenumerate(order_item):
