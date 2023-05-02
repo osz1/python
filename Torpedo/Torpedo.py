@@ -4,68 +4,76 @@ N = 8
 COLUMNS = {"A": 0, "B": 1, "C": 2, "D": 3, "E": 4, "F": 5, "G": 6, "H": 7}
 SHIP_LIST = [2, 2, 3, 3, 4]  # hajók
 
-# hajók elhelyezése
+max_ship_field = sum(SHIP_LIST)  # összes hajómező
+
+# hajók
 ships = []
 
+# elegendő hely és szomszéd hajó hiányának ellenőrzése egy hajó elhelyezéséhez
+def enough_space(ship, row, col, is_vertical):
+    if ships[row][col] == 0:  # nincs hajó
+        if is_vertical:  # függőleges
+            if (row + ship) < len(ships):  # van elegendő hely
+                for i in range((row - 1), (row + ship + 1)):
+                    for j in ((col - 1), col, (col + 1)):
+                        try:
+                            if ships[i][j]:  # van hajó
+                                return False
+                        except:
+                            pass
 
+                return True  # nincs hajó
+            else:  # nincs elegendő hely
+                return False
+
+        else:  # vízszintes
+            if (col + ship) < len(ships[row]):  # van elegendő hely
+                for j in range((col - 1), (col + ship + 1)):
+                    for i in ((row - 1), row, (row + 1)):
+                        try:
+                            if ships[i][j]:  # van hajó
+                                return False
+                        except:
+                            pass
+
+                return True  # nincs hajó
+            else:  # nincs elegendő hely
+                return False
+
+    return False  # van hajó
+
+
+
+
+# hajók elhelyezése
 def ship_placing():
-    i = 0
-    while i < len(SHIP_LIST):
-        # véletlen hely
+    s = 0
+    while s < len(SHIP_LIST):
+        # véletlen mező
         row = numpy.random.randint(N)
         col = numpy.random.randint(N)
 
-        # vízszintes vagy függőleges
+        # függőleges-e (vagy vízszintes)
         is_vertical = numpy.random.randint(2)
 
-        if ships[row][col] == 0:
+        # elegendő hely van-e és a környezetben nincs-e hajó
+        if enough_space(SHIP_LIST[s], row, col, is_vertical):
             if is_vertical:  # függőleges
-                try:
-                    no_ship = True
-
-                    # van-e hajó a véletlen helyen
-                    for j in range((row - 1), (row + SHIP_LIST[i] + 1)):
-                        for c in ((col - 1), col, (col + 1)):
-                            try:
-                                if ships[j][c]:
-                                    no_ship = False
-                            except:
-                                no_ship = False
-
-                    # hajó elhelyezése
-                    if no_ship:
-                        for j in range(row, (row + SHIP_LIST[i])):
-                            ships[j][col] = i + 1
-                        i += 1
-                except:
-                    pass
+                # hajó elhelyezése
+                for i in range(row, (row + SHIP_LIST[s])):
+                    ships[i][col] = s + 1
             else:  # vízszintes
-                try:
-                    no_ship = True
+                # hajó elhelyezése
+                for j in range(col, (col + SHIP_LIST[s])):
+                    ships[row][j] = s + 1
 
-                    # van-e hajó a véletlen helyen
-                    for j in range((col - 1), (col + SHIP_LIST[i] + 1)):
-                        for r in ((row - 1), row, (row + 1)):
-                            try:
-                                if ships[r][j]:
-                                    no_ship = False
-                            except:
-                                no_ship = False
-
-                    # hajó elhelyezése
-                    if no_ship:
-                        for j in range(col, (col + SHIP_LIST[i])):
-                            ships[row][j] = i + 1
-                        i += 1
-                except:
-                    pass
+            s += 1
 
 
-guesses = [[False for j in range(N)] for i in range(N)]  # tippek
+guesses = []  # tippek
 
-max_ship_field = sum(SHIP_LIST)  # összes hajómező
 found_ship_field = 0  # megtalált hajómezők
-alive_ships = len(SHIP_LIST)  # úszó hajók
+alive_ships = len(SHIP_LIST)  # úszó hajók (megjelenítése)
 
 
 # mező megjelenítése
@@ -81,6 +89,7 @@ def display_field():
             else:
                 grid += "- "
         grid += "\n"
+
     return grid
 
 
@@ -88,6 +97,7 @@ def display_field():
 def correct_guess(guess):
     if len(guess) != 2:
         return False
+
     return guess[0].isupper() and guess[1].isdigit() and (guess[1] != "0")
 
 
@@ -97,6 +107,7 @@ def ship_is_alive(ship):
         for j in range(len(ships[i])):
             if (ships[i][j] == ship) and (guesses[i][j] == 0):
                 return True
+
     return False
 
 
@@ -107,21 +118,21 @@ def reveal_ships():
         grid += str(i + 1) + " "
         for j in range(N):
             if ships[i][j]:  # hajó van a mezőn
-                if guesses[i][j]:
+                if guesses[i][j]:  # volt tipp
                     grid += "X "
-                else:
+                else:  # nem volt tipp
                     grid += "V "
             else:  # nincs hajó a mezőn
-                if guesses[i][j]:
+                if guesses[i][j]:  # volt tipp
                     grid += "O "
-                else:
+                else:  # nem volt tipp
                     grid += "- "
         grid += "\n"
     return "\nHajók elhelyezkedése:\n" + grid
 
 
 print("\nValdi Torpedó társasjátéka.\n")
-print("Kilépés: 'exit'\n")
+print("Kilépés: 'q'\n")
 print("A tipp formátuma:")
 print("első karakter (oszlop): nagybetű (A-H)")
 print("második karakter (sor): számok (1-" + str(N) + ")\n")
@@ -135,6 +146,13 @@ while run:
     # hajók elhelyezése
     ships = [[0 for j in range(N)] for i in range(N)]
     ship_placing()
+
+    guesses = [[False for j in range(N)] for i in range(N)]  # tippek
+
+    found_ship_field = 0  # megtalált hajómezők (talált tipp esetén nő)
+
+    # úszó hajók száma ("süllyedéseknél" csökken)
+    alive_ships = len(SHIP_LIST)
 
     # tippelés kezdődik
     guess_count = 40  # tippek száma (csökken)
@@ -173,7 +191,7 @@ while run:
             except:  # a tipp nincs a játékteren belül
                 print("\nÉrvénytelen érték.\n")
 
-        elif guess == "exit":  # kilépés a programból
+        elif guess == "q":  # kilépés a játékból
             print(reveal_ships())
             break
         else:
@@ -181,6 +199,7 @@ while run:
 
         if found_ship_field == max_ship_field:
             print("\nSikerült megtalálni az összes hajót.\n")
+            print(reveal_ships())
             break
 
     # tippelés vége
@@ -188,12 +207,9 @@ while run:
     if not guess_count:
         print("\nA lépések száma elfogyott.\n")
 
-    print(reveal_ships())
-
-    print("Igen: valami beírva.")
-    print("Nem: üres mező.")
+    print("Kilépés a játékból: 'q'\n")
 
     new_game = input("Új játék? ")
-    if not new_game:
+    if new_game == "q":  # kilépés a programból
         print("\nVége!\n")
         run = False
